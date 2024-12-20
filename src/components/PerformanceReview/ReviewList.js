@@ -37,17 +37,19 @@ const ReviewList = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Employee ID</TableCell>
-              <TableCell>Review</TableCell>
-              <TableCell>Rating</TableCell>
+              <TableCell>Employee</TableCell>
+              <TableCell>Review Date</TableCell>
+              <TableCell>Review Score</TableCell>
+              <TableCell>Review Notes</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {reviews.map((review) => (
               <TableRow key={review.id}>
-                <TableCell>{review.employeeId}</TableCell>
-                <TableCell>{review.review}</TableCell>
-                <TableCell>{review.rating}</TableCell>
+                <TableCell>{review.employee}</TableCell>
+                <TableCell>{review.reviewdate}</TableCell>
+                <TableCell>{review.reviewScore}</TableCell>
+                <TableCell>{review.reviewNotes}</TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -3,13 +3,14 @@ import instance from './axiosheader';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
-export const getEmployees = (params) => instance.get(`/Employee`, params );
+export const getEmployees = (data) => instance.get(`/Employee`, data );
+export const searchEmployees = (data) => instance.get(`/Employee/Search`, data );
 
-export const addEmployee = (data) => instance.post(`/Employees`, data);
+export const addEmployee = (data) => instance.post(`/Employee`, data);
 
-export const updateEmployee = (id, data) => instance.put(`/Employees/${id}`, data);
+export const updateEmployee = (id, data) => instance.put(`/Employee/${id}`, data);
 
-export const deleteEmployee = (id) => instance.delete(`/Employees/${id}`);
+export const deleteEmployee = (id) => instance.delete(`/Employee/${id}`);
 
 export const getDepartments = () => instance.get(`/Departments`);
 
@@ -22,3 +23,4 @@ export const getPerformanceReviews = (employeeId) =>
 
 export const addPerformanceReview = (data) =>
   instance.post(`/Performance-reviews`, data);
+

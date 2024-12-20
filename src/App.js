@@ -9,6 +9,7 @@ import DepartmentForm from "./components/Department/DepartmentForm";
 import ReviewForm from "./components/PerformanceReview/ReviewForm";
 import ReviewList from "./components/PerformanceReview/ReviewList";
 import './App.css'
+import EmployeeSearch from "./components/Employee/EmployeeSearch";
 
 const App = () => {
   return (
@@ -34,6 +35,7 @@ const App = () => {
           element={
             <>
               <EmployeeForm  />
+              <EmployeeSearch/>
               <EmployeeList />
             </>
           }

@@ -1,10 +1,25 @@
 import React, { useState } from "react";
 import { TextField, Button, Container, Typography } from "@mui/material";
-import api, { addEmployee } from "../../services/api";
+import { addEmployee } from "../../services/api";
+import dayjs from 'dayjs';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateField } from '@mui/x-date-pickers/DateField';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 const EmployeeForm = ({ onSubmitSuccess }) => {
-  const [name, setName] = useState("");
-  const [department, setDepartment] = useState("");
+  
+  const [Department, setDepartment] = React.useState('');
+
+  const handleChange = (event) => {
+    setDepartment(event.target.value);
+    setData(prevValues=>({...prevValues,department:event.target.value}));
+  };
+  
   const [data, setData]= useState({
     name:"",
     email:"",
@@ -19,12 +34,14 @@ const EmployeeForm = ({ onSubmitSuccess }) => {
     try {
       await addEmployee(data);
       onSubmitSuccess();
-      setName("");
-      setDepartment("");
     } catch (error) {
       console.error("Error adding employee:", error);
     }
   };
+  
+
+
+
 
   return (
     <Container>
@@ -32,6 +49,7 @@ const EmployeeForm = ({ onSubmitSuccess }) => {
         Add New Employee
       </Typography>
       <form onSubmit={handleSubmit}>
+        <div style={{marginBottom:"15px"}}>
         <TextField
           label="Name"
           fullWidth
@@ -47,13 +65,18 @@ const EmployeeForm = ({ onSubmitSuccess }) => {
           value={data.email}
           onChange={(e) => setData(prevValues=>({...prevValues,email:e.target.value}))}
         />
-        <TextField
-          label="Department"
-          fullWidth
-          margin="normal"
-          value={data.department}
-          onChange={(e) => setData(prevValues=>({...prevValues,department:e.target.value}))}
-        />
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Department</InputLabel>
+          <Select
+            value={Department}
+            label="Department"
+            onChange={handleChange}
+          >
+            <MenuItem value={1}>HR</MenuItem>
+            <MenuItem value={2}>Engineering</MenuItem>
+            <MenuItem value={3}>Sales</MenuItem>
+          </Select>
+        </FormControl>
         <TextField
           label="Position"
           fullWidth
@@ -68,13 +91,44 @@ const EmployeeForm = ({ onSubmitSuccess }) => {
           value={data.phone}
           onChange={(e) => setData(prevValues=>({...prevValues,phone:e.target.value}))}
         />
-        <TextField
-          label="JoiningDate"
+        
+
+<LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer
+      
+        components={[
+          'DateField'
+        ]}
+        
+      >
+        <DateField
+          label="Joining Date"
+          defaultValue={dayjs(Date.now())}
+          format="DD-MM-YYYY"
           fullWidth
-          margin="normal"
-          value={data.joiningDate}
-          onChange={(e) => setData(prevValues=>({...prevValues,joiningDate:e.target.value}))}
+          onChange={(date) => {
+            date = date ? date.format("YYYY-MM-DD") : "";
+            setData(prevState => ({
+            ...prevState,
+            joiningDate: date
+          }))
+        
+        }
+          
+             
+            }
         />
+      </DemoContainer>
+    </LocalizationProvider>
+
+
+                  
+
+
+
+
+
+    </div>
         <Button variant="contained" color="primary" type="submit">
           Submit
         </Button>

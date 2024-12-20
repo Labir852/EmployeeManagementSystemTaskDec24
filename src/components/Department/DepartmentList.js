@@ -39,8 +39,9 @@ const DepartmentList = () => {
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell>Department Name</TableCell>
+              <TableCell>Manager</TableCell>
+              <TableCell>Average Performance Score</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -48,7 +49,9 @@ const DepartmentList = () => {
               <TableRow key={department.id}>
                 <TableCell>{department.id}</TableCell>
                 <TableCell>{department.name}</TableCell>
-                <TableCell>
+                <TableCell>{department.managerName}</TableCell>
+                <TableCell>{department.avgPerformanceScore}</TableCell>
+                {/* <TableCell>
                   <Button
                     variant="contained"
                     color="primary"
@@ -64,7 +67,7 @@ const DepartmentList = () => {
                   >
                     Delete
                   </Button>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>
