@@ -1,43 +1,24 @@
-import axios from "axios";
+import axios from 'axios';
+import instance from './axiosheader';
 
-const API_BASE_URL = "http://localhost:5000/api/employees"; // Replace with your actual backend URL
+const API_BASE_URL = 'http://localhost:5000/api';
 
-export const getEmployees = async (pageNumber, pageSize) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/${pageNumber}/${pageSize}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching employees:", error);
-    throw error;
-  }
-};
+export const getEmployees = (params) => instance.get(`/Employee`, params );
 
-export const addEmployee = async (employee) => {
-  try {
-    const response = await axios.post(API_BASE_URL, employee);
-    return response.data;
-  } catch (error) {
-    console.error("Error adding employee:", error);
-    throw error;
-  }
-};
+export const addEmployee = (data) => instance.post(`/Employees`, data);
 
-export const updateEmployee = async (employee) => {
-  try {
-    const response = await axios.put(API_BASE_URL, employee);
-    return response.data;
-  } catch (error) {
-    console.error("Error updating employee:", error);
-    throw error;
-  }
-};
+export const updateEmployee = (id, data) => instance.put(`/Employees/${id}`, data);
 
-export const deleteEmployee = async (id) => {
-  try {
-    const response = await axios.delete(`${API_BASE_URL}/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error deleting employee:", error);
-    throw error;
-  }
-};
+export const deleteEmployee = (id) => instance.delete(`/Employees/${id}`);
+
+export const getDepartments = () => instance.get(`/Departments`);
+
+export const addDepartment = (data) => instance.post(`/Departments`, data);
+
+export const getDepartmentPerformance = () => instance.get(`/Departments/performance`);
+
+export const getPerformanceReviews = (employeeId) =>
+  instance.get(`/Performance-reviews`, { params: { employeeId } });
+
+export const addPerformanceReview = (data) =>
+  instance.post(`/Performance-reviews`, data);

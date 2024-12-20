@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button, Container, Grid, Typography, Box } from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, data } from "react-router-dom";
 import axios from "axios";
+import { updateEmployee } from "../../services/api";
 
 const EmployeeEdit = () => {
   const { id } = useParams(); // Get employee ID from route parameters
@@ -22,7 +23,7 @@ const EmployeeEdit = () => {
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/employees/${id}`);
+        const response = await updateEmployee(id,data);
         setEmployee(response.data);
         setLoading(false);
       } catch (error) {

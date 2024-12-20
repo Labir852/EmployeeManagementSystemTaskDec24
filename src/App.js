@@ -1,29 +1,65 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import EmployeeList from "./EmployeeList"; // List page for employees
-import EmployeeAdd from "./EmployeeAdd"; // Add new employee page
-import EmployeeEdit from "./EmployeeEdit"; // Edit employee page
-import { CssBaseline, Container } from "@mui/material"; // Material-UI baseline styles
+import React, { useState } from "react";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { Button, Container } from "@mui/material";
+import Header from "./components/Header";
+import EmployeeList from "./components/Employee/EmployeeList";
+import EmployeeForm from "./components/Employee/EmployeeForm";
+import DepartmentList from "./components/Department/DepartmentList";
+import DepartmentForm from "./components/Department/DepartmentForm";
+import ReviewForm from "./components/PerformanceReview/ReviewForm";
+import ReviewList from "./components/PerformanceReview/ReviewList";
+import './App.css'
 
-function App() {
+const App = () => {
   return (
     <Router>
-      <CssBaseline /> {/* Resets and normalizes browser styles */}
-      <Container>
-      <Typography variant="h3" align="center" gutterBottom>
-        Employee Management System 
-      </Typography>
-        <Routes>
-          {/* Default route: Employee List */}
-          <Route path="/" element={<EmployeeList />} />
-          {/* Route to add a new employee */}
-          <Route path="/employees/add" element={<EmployeeAdd />} />
-          {/* Route to edit an employee */}
-          <Route path="/employees/edit/:id" element={<EmployeeEdit />} />
-        </Routes>
+      <Header />
+      <div className="App">
+
+      
+      <Container style={{paddingTop:"20px"}}>
+        <Button component={Link} to="/" variant="contained" sx={{ m: 1 }}>
+          Employees
+        </Button>
+        <Button component={Link} to="/departments" variant="contained" sx={{ m: 1 }}>
+          Departments
+        </Button>
+        <Button component={Link} to="/reviews" variant="contained" sx={{ m: 1 }}>
+          Performance Reviews
+        </Button>
       </Container>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <EmployeeForm  />
+              <EmployeeList />
+            </>
+          }
+        />
+        <Route
+          path="/departments"
+          element={
+            <>
+              <DepartmentForm />
+              <DepartmentList />
+            </>
+          }
+        />
+        <Route
+          path="/reviews"
+          element={
+            <>
+              <ReviewForm />
+              <ReviewList />
+            </>
+          }
+        />
+      </Routes>
+      </div>
     </Router>
   );
-}
+};
 
 export default App;
