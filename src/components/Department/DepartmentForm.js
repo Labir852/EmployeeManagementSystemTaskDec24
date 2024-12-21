@@ -1,33 +1,35 @@
 import React, { useState } from "react";
 import { TextField, Button, Container, Typography } from "@mui/material";
 import  { addDepartment } from "../../services/api";
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import Swal from "sweetalert2";
 
-const DepartmentForm = ({ onSubmitSuccess }) => {
-  const [name, setName] = useState("");
-  const [Manager, setManager] = React.useState('');
+const DepartmentForm = () => {
   const [data,setData] = useState({
+    DepartmentID:0,
     DepartmentName:"",
     ManagerId:0,
-    DepartmentBudget:0
+    ManagerName:"",
+    Budget:0,
+    avgscore:0.0
 
   })
-
-  const handleChange = (event) => {
-    setManager(event.target.value);
-    setData(prevValues=>({...prevValues,ManagerId:event.target.value}));
-  };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await addDepartment(data);
-      onSubmitSuccess();
-      setName("");
+     let response =  await addDepartment(data);
+     if(response.data)
+      Swal.fire({
+              title: "Success!",
+              text: `${response.data}!`,
+              icon: "success"
+            });
     } catch (error) {
-      console.error("Error adding department:", error);
+      Swal.fire({
+              title: "Oops! Something Went wrong",
+              text: `${error}!`,
+              icon: "error"
+            });
     }
   };
 
@@ -44,25 +46,14 @@ const DepartmentForm = ({ onSubmitSuccess }) => {
           value={data.DepartmentName}
           onChange={(e) => setData(prevValues=>({...prevValues,DepartmentName:e.target.value}))}
         />
-              <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Manager</InputLabel>
-          <Select
-            value={Manager}
-            label="Manager"
-            onChange={handleChange}
-          >
-            <MenuItem value={1}>Labir</MenuItem>
-            <MenuItem value={2}>Abir</MenuItem>
-            <MenuItem value={3}>Sagir</MenuItem>
-          </Select>
-        </FormControl>
+              
         <TextField
           label="Department Budget"
           fullWidth
           margin="normal"
           type="number"
-          value={data.DepartmentBudget}
-          onChange={(e) => setData(prevValues=>({...prevValues,DepartmentBudget:e.target.value}))}
+          value={data.Budget}
+          onChange={(e) => setData(prevValues=>({...prevValues,Budget:e.target.value}))}
         />
         <Button variant="contained" color="primary" type="submit">
           Submit

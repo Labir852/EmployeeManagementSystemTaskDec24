@@ -9,7 +9,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
 } from "@mui/material";
 import  { getDepartments } from "../../services/api";
 
@@ -28,6 +27,7 @@ const DepartmentList = () => {
       console.error("Error fetching departments:", error);
     }
   };
+  
 
   return (
     <Container>
@@ -46,28 +46,11 @@ const DepartmentList = () => {
           </TableHead>
           <TableBody>
             {departments.map((department) => (
-              <TableRow key={department.id}>
-                <TableCell>{department.id}</TableCell>
-                <TableCell>{department.name}</TableCell>
+              <TableRow key={department.departmentID}>
+                <TableCell>{department.departmentID}</TableCell>
+                <TableCell>{department.departmentName}</TableCell>
                 <TableCell>{department.managerName}</TableCell>
-                <TableCell>{department.avgPerformanceScore}</TableCell>
-                {/* <TableCell>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                    sx={{ mr: 1 }}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    size="small"
-                  >
-                    Delete
-                  </Button>
-                </TableCell> */}
+                <TableCell>{department.avgscore}</TableCell>
               </TableRow>
             ))}
           </TableBody>

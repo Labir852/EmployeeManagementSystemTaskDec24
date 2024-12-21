@@ -10,6 +10,7 @@ import ReviewForm from "./components/PerformanceReview/ReviewForm";
 import ReviewList from "./components/PerformanceReview/ReviewList";
 import './App.css'
 import EmployeeSearch from "./components/Employee/EmployeeSearch";
+import AddManager from "./components/Department/AddManager";
 
 const App = () => {
   return (
@@ -45,6 +46,7 @@ const App = () => {
           element={
             <>
               <DepartmentForm />
+              <AddManager/>
               <DepartmentList />
             </>
           }

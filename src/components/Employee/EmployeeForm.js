@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextField, Button, Container, Typography } from "@mui/material";
-import { addEmployee } from "../../services/api";
+import { addEmployee, getDepartments } from "../../services/api";
 import dayjs from 'dayjs';
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateField } from '@mui/x-date-pickers/DateField';
@@ -10,32 +10,49 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import Swal from "sweetalert2";
 
-const EmployeeForm = ({ onSubmitSuccess }) => {
+const EmployeeForm = () => {
   
-  const [Department, setDepartment] = React.useState('');
+  const [Department,setDepartment] = useState([]);
 
+    useEffect( () => {
+      fetchDepartment();
+    }, []);
+    const fetchDepartment = async ()=>{
+      let response = await getDepartments();
+      let departmentlist = response.data;
+      setDepartment(departmentlist);
+    }
   const handleChange = (event) => {
-    setDepartment(event.target.value);
-    setData(prevValues=>({...prevValues,department:event.target.value}));
+    setData(prevValues=>({...prevValues,departmentId:event.target.value}));
   };
   
   const [data, setData]= useState({
     name:"",
     email:"",
     phone:"",
-    department:0,
+    departmentId:0,
     position:"",
-    joiningDate:"",
+    joiningDate:dayjs(Date.now()),
+    status:""
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await addEmployee(data);
-      onSubmitSuccess();
+      const response = await addEmployee(data);
+      Swal.fire({
+        title: "Success!",
+        text: `${response.data}!`,
+        icon: "success"
+      });
     } catch (error) {
-      console.error("Error adding employee:", error);
+      Swal.fire({
+        title: "Oops! Something Went wrong",
+        text: `${error}!`,
+        icon: "error"
+      });
     }
   };
   
@@ -68,13 +85,15 @@ const EmployeeForm = ({ onSubmitSuccess }) => {
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Department</InputLabel>
           <Select
-            value={Department}
+            value={data.departmentId}
             label="Department"
             onChange={handleChange}
           >
-            <MenuItem value={1}>HR</MenuItem>
-            <MenuItem value={2}>Engineering</MenuItem>
-            <MenuItem value={3}>Sales</MenuItem>
+            {
+              Department.map((department) =>{
+               return(<MenuItem key={department.departmentID} value={department.departmentID}>{department.departmentName}</MenuItem>) 
+              })
+            }
           </Select>
         </FormControl>
         <TextField
@@ -120,7 +139,22 @@ const EmployeeForm = ({ onSubmitSuccess }) => {
         />
       </DemoContainer>
     </LocalizationProvider>
-
+    <FormControl fullWidth style={{marginTop:"10px"}}>
+          <InputLabel id="demo-simple-select-label">Status</InputLabel>
+          <Select
+            value={data.status}
+            label="Status"
+            onChange={(e)=>{
+              setData(prevState => ({
+                ...prevState,
+                status: e.target.value
+              }))
+            }}
+          >
+            <MenuItem value={"active"}>Active</MenuItem>
+            <MenuItem value={"inactive"}>Inactive</MenuItem>
+          </Select>
+        </FormControl>
 
                   
 

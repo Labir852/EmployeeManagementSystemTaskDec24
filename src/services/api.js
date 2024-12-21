@@ -1,26 +1,41 @@
-import axios from 'axios';
+
 import instance from './axiosheader';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+export const getEmployees = async (data) => {let response = await instance.get(`/Employee`, data );return response}
 
-export const getEmployees = (data) => instance.get(`/Employee`, data );
-export const searchEmployees = (data) => instance.get(`/Employee/Search`, data );
 
-export const addEmployee = (data) => instance.post(`/Employee`, data);
+export const addEmployee =async (data) => {let response =await instance.post(`/Employee`, data);return response}
 
-export const updateEmployee = (id, data) => instance.put(`/Employee/${id}`, data);
+export const updateEmployee =async (id, data) => {let response =await instance.put(`/Employee/${id}`, data);return response}
 
-export const deleteEmployee = (id) => instance.delete(`/Employee/${id}`);
+export const deleteEmployee = async (id) => {let response =await instance.post(`/Employee/delete/${id}`);return response}
 
-export const getDepartments = () => instance.get(`/Departments`);
+export const getDepartments =async () =>  {let response =await instance.get(`/Department`); return response}
 
-export const addDepartment = (data) => instance.post(`/Departments`, data);
+export const addDepartment =async (data) => {let response =await instance.post(`/Department`, data);return response}
 
-export const getDepartmentPerformance = () => instance.get(`/Departments/performance`);
+export const getEmployeesByDept = async (id) => {let response = await instance.get(`/Employee/department/${id}`);return response}
 
-export const getPerformanceReviews = (employeeId) =>
-  instance.get(`/Performance-reviews`, { params: { employeeId } });
+export const addManager =async (id,data) => {let response =await instance.put(`/Department/addManager/${id}`, data);return response}
 
-export const addPerformanceReview = (data) =>
-  instance.post(`/Performance-reviews`, data);
+
+
+export const getPerformanceReviews =async (employeeId) =>
+  {let response =await instance.get(`/PerformanceReview`);return response}
+
+export const addPerformanceReview =async (data) =>
+  {let response =await instance.post(`/PerformanceReview`, data);return response}
+
+export const searchEmployees = async ({ name, department, position, page, pageSize }) => {
+  const response = await instance.get("/Employee/SearchEmployees", {
+    params: {
+      searchQuery: name,
+      departmentId: department || null,
+      position,
+      page,
+      pageSize,
+    },
+  });
+  return response.data;
+};
 

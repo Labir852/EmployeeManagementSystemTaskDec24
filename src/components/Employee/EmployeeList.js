@@ -11,7 +11,7 @@ import {
   Paper,
   Button,TextField
 } from "@mui/material";
-import api, { updateEmployee, deleteEmployee, getEmployees } from "../../services/api";
+import  { updateEmployee, deleteEmployee, getEmployees, getDepartments } from "../../services/api";
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Fade from '@mui/material/Fade';
@@ -20,14 +20,14 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import dayjs from "dayjs";
+import Swal from "sweetalert2";
 
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
-  const [Department, setDepartment] = React.useState('');
 
   const handleChange = (event) => {
-    setDepartment(event.target.value);
-    setData(prevValues=>({...prevValues,department:event.target.value}));
+    setData(prevValues=>({...prevValues,departmentId:event.target.value}));
   };
   
   const [data, setData]= useState({
@@ -39,11 +39,19 @@ const EmployeeList = () => {
     position:""
   });
 
-
-
+  const [Department,setDepartment] = useState([]);
+  
+  const [open, setOpen] = useState(false);
+ 
   useEffect(() => {
     fetchEmployees();
-  }, []);
+    fetchDepartment();
+  }, [open]);
+  const fetchDepartment = async ()=>{
+    let response = await getDepartments();
+    let departmentlist = response.data;
+    setDepartment(departmentlist);
+  }
 
   const fetchEmployees = async () => {
     try {
@@ -68,18 +76,54 @@ const EmployeeList = () => {
     textAlign:"center"
   };
 
-  const [open, setOpen] = useState(false);
 
 const handleClose = () => {
   setOpen(false);
 };
 
+const handleDelete =  (id) =>{
+  Swal.fire({
+    title: 'Do you want to Delete the Employee?',
+    icon: "question",
+    showDenyButton: true,
+    confirmButtonText: 'Yes',
+    denyButtonText: 'No',
+    
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      let response =await deleteEmployee(id);
+      if(response.data)
+        Swal.fire({
+          title: "Success!",
+          text: `${response.data}!`,
+          icon: "success"
+        });
+    } 
+  });
+  setEmployees(employees.filter(em => em.id !== id))
+  fetchEmployees();
+}
+
 const handleSubmit = async (e) => {
   e.preventDefault();
   try {
-    await updateEmployee(data.id,data);
+    let response = await updateEmployee(data.id,data);
+    if(response.data)
+    {
+      handleClose();
+      Swal.fire({
+        title: "Success!",
+        text: `${response.data}!`,
+        icon: "success"
+      });
+    }
+    
   } catch (error) {
-    console.error("Error adding employee:", error);
+    Swal.fire({
+      title: "Oops! Something Went wrong",
+      text: `${error}!`,
+      icon: "error"
+    });
   }
 };
 
@@ -124,8 +168,12 @@ const handleSubmit = async (e) => {
                         name:employee.name,
                         email:employee.email,
                         phone:employee.phone,
-                        department:employee.departmentId,
-                        position:employee.position
+                        departmentId:employee.departmentId,
+                        DepartmentName:"",
+                        position:employee.position,
+                        JoiningDate:dayjs(Date.now()),
+                        Status:"",
+                        Deleted:""
                       })
                     }}
                   >
@@ -135,7 +183,9 @@ const handleSubmit = async (e) => {
                     variant="contained"
                     color="secondary"
                     size="small"
-                    onClick={()=>deleteEmployee(employee.id)}
+                    onClick={()=>{
+                      handleDelete(employee.id);
+                    }}
                   >
                     Delete
                   </Button>
@@ -178,16 +228,18 @@ const handleSubmit = async (e) => {
           value={data.email}
           onChange={(e) => setData(prevValues=>({...prevValues,email:e.target.value}))}
         />
-        <FormControl fullWidth>
+       <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Department</InputLabel>
           <Select
-            value={Department}
+            value={data.departmentId}
             label="Department"
             onChange={handleChange}
           >
-            <MenuItem value={1}>HR</MenuItem>
-            <MenuItem value={2}>Engineering</MenuItem>
-            <MenuItem value={3}>Sales</MenuItem>
+            {
+              Department.map((department) =>{
+               return(<MenuItem key={department.departmentID} value={department.departmentID}>{department.departmentName}</MenuItem>) 
+              })
+            }
           </Select>
         </FormControl>
         <TextField
@@ -204,6 +256,22 @@ const handleSubmit = async (e) => {
           value={data.phone}
           onChange={(e) => setData(prevValues=>({...prevValues,phone:e.target.value}))}
         />
+        <FormControl fullWidth style={{marginTop:"10px"}}>
+          <InputLabel id="demo-simple-select-label">Status</InputLabel>
+          <Select
+            value={data.status}
+            label="Status"
+            onChange={(e)=>{
+              setData(prevState => ({
+                ...prevState,
+                status: e.target.value
+              }))
+            }}
+          >
+            <MenuItem value={"active"}>Active</MenuItem>
+            <MenuItem value={"inactive"}>Inactive</MenuItem>
+          </Select>
+        </FormControl>
         </div>
           <Button variant="contained" color="warning" type="submit">
           Update Employee

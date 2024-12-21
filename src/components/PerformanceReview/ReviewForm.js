@@ -1,42 +1,58 @@
-import React, { useState } from "react";
-import { TextField, Button, Container, Typography, Rating } from "@mui/material";
-import { addPerformanceReview } from "../../services/api";
+import React, { useEffect, useState } from "react";
+import { TextField, Button, Container, Typography } from "@mui/material";
+import { addPerformanceReview, getEmployees } from "../../services/api";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import dayjs from 'dayjs';
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateField } from '@mui/x-date-pickers/DateField';
-const ReviewForm = ({ onSubmitSuccess }) => {
-  const [employeeId, setEmployeeId] = useState("");
-  const [review, setReview] = useState("");
-  const [rating, setRating] = useState("");
-  const [Employee, setEmployee] = React.useState('');
+import Swal from "sweetalert2";
+const ReviewForm = () => {
+  const [Employee, setEmployee] = React.useState([]);
   const [data,setData] = useState({
+    id:0,
     EmployeeId:0,
     ReviewDate:dayjs(Date.now()),
-    ReviewScore:0.0,
-    ReviewNotes:""
+    Score:0.0,
+    Notes:"",
+    EmployeeName:""
   })
+useEffect(() => {
+  fetchEmployees();
+  }, []);
+  const fetchEmployees = async (id) => {
+      try {
+        const response = await getEmployees()
+        setEmployee(response.data);
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+      }
+    };
 
   const handleChange = (event) => {
-    setEmployee(event.target.value);
     setData(prevValues=>({...prevValues,EmployeeId:event.target.value}));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await addPerformanceReview({ employeeId, review, rating });
-      onSubmitSuccess();
-      setEmployeeId("");
-      setReview("");
-      setRating("");
+      const response = await addPerformanceReview(data);
+       if(response.data)
+            Swal.fire({
+                    title: "Success!",
+                    text: `${response.data}!`,
+                    icon: "success"
+                  });
     } catch (error) {
-      console.error("Error adding performance review:", error);
+      Swal.fire({
+        title: "Oops! Something Went wrong",
+        text: `${error}!`,
+        icon: "error"
+      });
     }
   };
 
@@ -47,16 +63,19 @@ const ReviewForm = ({ onSubmitSuccess }) => {
       </Typography>
       <form onSubmit={handleSubmit}>
         
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Employee</InputLabel>
+      <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label" style={{margin:"10px"}}>Employee</InputLabel>
           <Select
-            value={data.EmployeeId }
+            value={data.EmployeeId}
             label="Employee"
             onChange={handleChange}
+            style={{margin:"10px"}}
           >
-            <MenuItem value={1}>Labir</MenuItem>
-            <MenuItem value={2}>Abir</MenuItem>
-            <MenuItem value={3}>Sagir</MenuItem>
+            {
+              Employee.map(emp =>{
+                return (<MenuItem key={emp.id} value={emp.id}>{emp.name} ({emp.position})</MenuItem>)
+              })
+            }
           </Select>
         </FormControl>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -82,14 +101,14 @@ const ReviewForm = ({ onSubmitSuccess }) => {
           margin="normal"
           value={data.ReviewScore}
           type="number"
-          onChange={(e) => setData(prevValues=>({...prevValues,ReviewScore:e.target.value}))}
+          onChange={(e) => setData(prevValues=>({...prevValues,Score:e.target.value}))}
         />
         <TextField
           label="Review Notes"
           fullWidth
           margin="normal"
           value={data.ReviewNotes}
-          onChange={(e) => setData(prevValues=>({...prevValues,ReviewNotes:e.target.value}))}
+          onChange={(e) => setData(prevValues=>({...prevValues,Notes:e.target.value}))}
         />
         <Button variant="contained" color="primary" type="submit">
           Submit

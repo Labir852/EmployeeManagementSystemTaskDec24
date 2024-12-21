@@ -10,7 +10,7 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import api, { getPerformanceReviews } from "../../services/api";
+import  { getPerformanceReviews } from "../../services/api";
 
 const ReviewList = () => {
   const [reviews, setReviews] = useState([]);
@@ -46,10 +46,10 @@ const ReviewList = () => {
           <TableBody>
             {reviews.map((review) => (
               <TableRow key={review.id}>
-                <TableCell>{review.employee}</TableCell>
-                <TableCell>{review.reviewdate}</TableCell>
-                <TableCell>{review.reviewScore}</TableCell>
-                <TableCell>{review.reviewNotes}</TableCell>
+                <TableCell>{review.employeeName}</TableCell>
+                <TableCell>{review.reviewDate}</TableCell>
+                <TableCell>{review.score}</TableCell>
+                <TableCell>{review.notes}</TableCell>
               </TableRow>
             ))}
           </TableBody>
