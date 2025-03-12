@@ -14,7 +14,7 @@ const EmployeeSearch = () => {
   const [Department, setDepartment] = useState(0);
   const [employees, setEmployees] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(3);
   const [totalPages, setTotalPages] = useState(1);
   const [DepartmentList,setDepartmentList] = useState([]);
 
@@ -48,8 +48,10 @@ const EmployeeSearch = () => {
   };
 
   useEffect(() => {
+    
     fetchDepartments();
     fetchEmployees();
+    setEmployees([]);
   }, [page, pageSize]);
  
     
@@ -149,7 +151,7 @@ const EmployeeSearch = () => {
         <Pagination
           count={totalPages}
           page={page}
-          onChange={(e, value) => setPage(value)}
+          onChange={(e, value) =>{ setPage(value)}}
           sx={{ marginTop: "1rem" }}
         />
       </Box>
